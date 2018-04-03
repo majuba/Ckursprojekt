@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		D31592C22073952A008F6611 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = D31592C12073952A008F6611 /* main.c */; };
+		D31592CA2073957D008F6611 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D31592C92073957D008F6611 /* SDL2.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,8 @@
 /* Begin PBXFileReference section */
 		D31592BE2073952A008F6611 /* sdltest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sdltest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D31592C12073952A008F6611 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		D31592C92073957D008F6611 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
+		D31592CB20739AF6008F6611 /* shipsheetparts.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = shipsheetparts.bmp; path = assets/shipsheetparts.bmp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +35,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D31592CA2073957D008F6611 /* SDL2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41,8 +45,10 @@
 		D31592B52073952A008F6611 = {
 			isa = PBXGroup;
 			children = (
+				D31592CC20739B26008F6611 /* assets */,
 				D31592C02073952A008F6611 /* sdltest */,
 				D31592BF2073952A008F6611 /* Products */,
+				D31592C82073957C008F6611 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -60,6 +66,22 @@
 				D31592C12073952A008F6611 /* main.c */,
 			);
 			path = sdltest;
+			sourceTree = "<group>";
+		};
+		D31592C82073957C008F6611 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D31592C92073957D008F6611 /* SDL2.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D31592CC20739B26008F6611 /* assets */ = {
+			isa = PBXGroup;
+			children = (
+				D31592CB20739AF6008F6611 /* shipsheetparts.bmp */,
+			);
+			path = assets;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -233,6 +255,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -241,6 +267,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
