@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D303A8252074FB72006EE6D4 /* gameObjs.c in Sources */ = {isa = PBXBuildFile; fileRef = D303A8242074FB72006EE6D4 /* gameObjs.c */; };
 		D31592C22073952A008F6611 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = D31592C12073952A008F6611 /* main.c */; };
 		D31592CA2073957D008F6611 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D31592C92073957D008F6611 /* SDL2.framework */; };
 /* End PBXBuildFile section */
@@ -24,6 +25,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D303A8232074FB72006EE6D4 /* gameObjs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = gameObjs.h; sourceTree = "<group>"; };
+		D303A8242074FB72006EE6D4 /* gameObjs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = gameObjs.c; sourceTree = "<group>"; };
+		D303A82620750DE1006EE6D4 /* tinychicken_cooked.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = tinychicken_cooked.bmp; sourceTree = "<group>"; };
 		D31592BE2073952A008F6611 /* sdltest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sdltest; sourceTree = BUILT_PRODUCTS_DIR; };
 		D31592C12073952A008F6611 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		D31592C92073957D008F6611 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
@@ -65,6 +69,8 @@
 			isa = PBXGroup;
 			children = (
 				D31592C12073952A008F6611 /* main.c */,
+				D303A8232074FB72006EE6D4 /* gameObjs.h */,
+				D303A8242074FB72006EE6D4 /* gameObjs.c */,
 			);
 			path = sdltest;
 			sourceTree = "<group>";
@@ -82,6 +88,7 @@
 			children = (
 				D31592CB20739AF6008F6611 /* shipsheetparts.bmp */,
 				D31592CD2073E25C008F6611 /* plane.bmp */,
+				D303A82620750DE1006EE6D4 /* tinychicken_cooked.bmp */,
 			);
 			path = assets;
 			sourceTree = "<group>";
@@ -144,6 +151,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D31592C22073952A008F6611 /* main.c in Sources */,
+				D303A8252074FB72006EE6D4 /* gameObjs.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
