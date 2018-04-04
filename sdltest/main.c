@@ -40,24 +40,15 @@ struct gameObj {
 
 struct objList {
     struct gameObj *data;
-    int free;
 };
 
-struct objList init_objList(int size){
-    struct objList ret = {
-        .data = malloc(sizeof(struct gameObj) * size),
-        .free = 0,
-    };
-    
-    return ret;
-}
-
-void append_objlist(struct objList *list, struct gameObj obj){
-    if(list->free > MAX_BULLETS){
-        list->free = 0;
+void objList_write(struct gameObj *list, struct gameObj obj){
+    for(size_t i = 0; i < MAX_BULLETS; i++){
+        if(! list[i].visible){
+            list[i] = obj;
+            return;
+        }
     }
-    list->data[list->free] = obj;
-    list->free++;
     return;
 }
 
@@ -125,7 +116,15 @@ int main(int argc, const char * argv[]) {
     double scale = 1.5;
     SDL_Event e;
     //struct objList enemies = init_objList(20);
-    struct objList bullets = init_objList(MAX_BULLETS);
+    struct gameObj *bullets = malloc(sizeof(struct gameObj) * MAX_BULLETS);
+    struct gameObj tempBullets = {
+        .visible = 0
+    };
+    
+    //initializing objList with "0-bullets"
+    for(size_t i = 0; i < MAX_BULLETS; i++){
+        bullets[i] = tempBullets;
+    }
     
     struct gameObj player = {
         .source = {
@@ -165,7 +164,7 @@ int main(int argc, const char * argv[]) {
         
         deltaTime = ((NOW - LAST) / (double)SDL_GetPerformanceFrequency() );
         
-        bullet.dx = 10 * deltaTime;
+        bullet.dx = 2;
         
         while( SDL_PollEvent(&e) != 0)
         {
@@ -193,7 +192,7 @@ int main(int argc, const char * argv[]) {
                         bullet.position.x = player.position.x + player.position.w;
                         bullet.position.y = player.position.y + player.position.h;
                         bullet.visible = 1;
-                        append_objlist(&bullets, bullet);
+                        objList_write(bullets, bullet);
                 }
             }
             else if (e.type == SDL_KEYUP)
@@ -222,8 +221,9 @@ int main(int argc, const char * argv[]) {
         update_gameObj(&player);
         
         //updating bullet positions
-        for(size_t i = 0; i <= bullets.free; i++){
-            update_gameObj(&bullets.data[i]);
+        for(size_t i = 0; i <= MAX_BULLETS; i++){
+            if(bullets[i].visible)
+                update_gameObj(&bullets[i]);
         }
         //player.position.x += (int) player.dx;
         //player.position.y += (int) player.dy;
@@ -236,15 +236,21 @@ int main(int argc, const char * argv[]) {
         center.x = player.position.w / 2;
         center.y = player.position.h / 2;
         //SDL_RenderCopyEx(renderer, bmpTex, &player.source, &player.position, angle, &center, flip);
-        SDL_RenderCopy(renderer, bmpTex, &player.source, &player.position);
+        
         SDL_SetRenderDrawColor(renderer, 255, 200, 50, 255);
-        for(size_t i = 0; i < bullets.free; i++){
-            SDL_RenderDrawLine(renderer,
-                               bullets.data[i].position.x,
-                               bullets.data[i].position.y,
-                               bullets.data[i].position.x + bullets.data[i].position.w,
-                               bullets.data[i].position.y + 1);
+        for(size_t i = 0; i < MAX_BULLETS; i++){
+            if(bullets[i].visible)
+            {
+                SDL_RenderDrawLine(renderer,
+                                   bullets[i].position.x - 5,
+                                   bullets[i].position.y - 2,
+                                   bullets[i].position.x + bullets[i].position.w,
+                                   bullets[i].position.y - 2);
+            }
+           
         }
+        
+        SDL_RenderCopy(renderer, bmpTex, &player.source, &player.position);
         
         SDL_RenderPresent(renderer);
     }
