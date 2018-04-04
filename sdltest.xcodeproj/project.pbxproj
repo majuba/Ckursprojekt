@@ -28,6 +28,7 @@
 		D31592C12073952A008F6611 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		D31592C92073957D008F6611 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		D31592CB20739AF6008F6611 /* shipsheetparts.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = shipsheetparts.bmp; path = assets/shipsheetparts.bmp; sourceTree = SOURCE_ROOT; };
+		D31592CD2073E25C008F6611 /* plane.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = plane.bmp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +81,7 @@
 			isa = PBXGroup;
 			children = (
 				D31592CB20739AF6008F6611 /* shipsheetparts.bmp */,
+				D31592CD2073E25C008F6611 /* plane.bmp */,
 			);
 			path = assets;
 			sourceTree = "<group>";

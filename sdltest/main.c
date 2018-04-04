@@ -69,25 +69,26 @@ int main(int argc, const char * argv[]) {
         }
         else
         {
-            renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-            bmpTex = load_Texture("./assets/shipsheetparts.bmp", renderer);
+            renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+            bmpTex = load_Texture("./assets/plane.bmp", renderer);
         
             int quit = 0;
+            double scale = 1.5;
             SDL_Event e;
             struct gameObj *objects = malloc(sizeof(struct gameObj) * 20); //handling up to 20 elements on screen
             
             struct gameObj player = {
                 .source = {
-                    .x = 20,
-                    .y = 12,
-                    .w = 45,
-                    .h = 35,
+                    .x = 16,
+                    .y = 47,
+                    .w = 51,
+                    .h = 25,
                 },
                 .position = {
                     .x = 50,
                     .y = 50,
-                    .w = 45,
-                    .h = 35,
+                    .w = player.source.w * scale,
+                    .h = player.source.h * scale,
                 },
                 .dx = 0,
                 .dy = 0,
@@ -96,8 +97,6 @@ int main(int argc, const char * argv[]) {
             };
             
             objects[0] = player;
-            
-            double const angle = 90.0;
             
             Uint64 NOW = SDL_GetPerformanceCounter();
             Uint64 LAST = 0;
@@ -165,12 +164,13 @@ int main(int argc, const char * argv[]) {
                 
                 SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF);
                 SDL_RenderClear(renderer);
-                SDL_RendererFlip flip = SDL_FLIP_NONE;
+                //SDL_RendererFlip flip = SDL_FLIP_NONE;
                 
                 SDL_Point center;
                 center.x = player.position.w / 2;
                 center.y = player.position.h / 2;
-                SDL_RenderCopyEx(renderer, bmpTex, &player.source, &player.position, angle, &center, flip);
+                //SDL_RenderCopyEx(renderer, bmpTex, &player.source, &player.position, angle, &center, flip);
+                SDL_RenderCopy(renderer, bmpTex, &player.source, &player.position);
                 SDL_RenderPresent(renderer);
             }
             SDL_DestroyTexture(bmpTex);
