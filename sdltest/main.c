@@ -2,13 +2,14 @@
  *  main.c
  *  sdltest
  *
- *  Created by Mark Backhaus on 03.04.18. ✈️✈️✈️
+ *  Created by Mark Backhaus on 03.04.18. ✈️🐓
  *  Copyright © 2018 Mark Backhaus. All rights reserved.
  *
  *  TODO:
  *
- *      - change sprite for movement direction
- *      - render multiple objects preferably with a loop and a function
+ *
+ *      - collision
+ *      - game object double x and y
  *      - bullet sprites
  *      - Background
  *      - scrolling background
@@ -21,8 +22,8 @@
 #include "gameObjs.h"
 
 const int BULLET_SPEED = 20;
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 780;
+const int SCREEN_HEIGHT = 500;
 const int MAX_BULLETS = 50;
 const int MAX_CHICKENS = 20;
 
@@ -32,29 +33,35 @@ void update_gameObj(gameObj *p)
     switch(p->type)
     {
         case PLAYER:
+            //check if player is on border of left and right sides
             if(p->position.x + p->dx > SCREEN_WIDTH - p->position.w || p->position.x + p->dx < 0){
                 p->dx = 0;
                 return;
             }
+            //check if player is on border of top and bottom sides
             if(p->position.y + p->dy >= SCREEN_HEIGHT - p->position.h || p->position.y + p->dy <= 0){
                 p->dy = 0;
                 return;
             }
-            p->position.x += (int) p->dx;
-            p->position.y += (int) p->dy;
+            p->x += p->dx; //update "internal" float position
+            p->y += p->dy;
+            p->position.x = (int) p->x; //round internal position to sdl_rect for rendering
+            p->position.y = (int) p->y;
             break;
         case BULLET:
             if(p->position.x > SCREEN_WIDTH){
                 p->visible = 0;
                 break;
             }
-            p->position.x += (int) p->dx;
+            p->x += p->dx;
+            p->position.x = (int) p->x;
             break;
         case CHICKEN:
             if(p->position.x < - p->position.w){
                 p->visible = 0;
             }
-            p->position.x += (int) p->dx;
+            p->x += p->dx;
+            p->position.x = (int) p->x;
     }
     return;
 };
@@ -65,6 +72,11 @@ int main(int argc, const char * argv[]) {
     SDL_Renderer *renderer = NULL;
     SDL_Texture *spriteSheet = NULL;
     SDL_Texture *chicken_cooked = NULL;
+    SDL_Texture *bg = NULL;
+    
+    double bg_offset = 0;
+    int vel = 50;
+    int chickenVel = 15;
     
     if(SDL_Init(SDL_INIT_VIDEO) < 0)
     {
@@ -85,8 +97,7 @@ int main(int argc, const char * argv[]) {
         exit(1);
     }
     
-    
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     
     if(renderer == NULL){
         fprintf(stderr, "error initializing renderer! SDL ERR: %s \n", SDL_GetError());
@@ -95,8 +106,9 @@ int main(int argc, const char * argv[]) {
     
     spriteSheet = load_Texture("./assets/plane.bmp", renderer);
     chicken_cooked = load_Texture("./assets/tinychicken_cooked.bmp", renderer);
+    bg = load_Texture("./assets/bg.bmp", renderer);
     
-    if(spriteSheet == NULL){
+    if(spriteSheet == NULL || chicken_cooked == NULL || bg == NULL){
         fprintf(stderr, "error loading spritesheet! SDL ERR: %s \n", SDL_GetError());
         exit(1);
     }
@@ -141,16 +153,13 @@ int main(int argc, const char * argv[]) {
             .w = player.source.w * scale,
             .h = player.source.h * scale,
         },
+        .x = player.position.x,
+        .y = player.position.y,
         .dx = 0,
         .dy = 0,
         .visible = 1,
         .type = PLAYER,
     };
-    
-    Uint64 NOW = SDL_GetPerformanceCounter();
-    Uint64 LAST = 0;
-    double deltaTime = 0;
-    int vel = 1;
     
     gameObj bullet = {
         .type = BULLET,
@@ -171,19 +180,46 @@ int main(int argc, const char * argv[]) {
             .x = SCREEN_WIDTH + chicken.source.w,
             .w = 50,
             .h = 40,
-        }
+        },
+        .x = chicken.position.x
     };
     
+    SDL_Rect bg_source = {
+        .x = 0,
+        .y = 0,
+        .w = 320,
+        .h = 256
+    };
+    
+    SDL_Rect bg_dest1 = {
+        .x = 0,
+        .y = 0,
+        .w = SCREEN_WIDTH,
+        .h = SCREEN_HEIGHT
+    };
+    
+    SDL_Rect bg_dest2 = {
+        .x = SCREEN_WIDTH,
+        .y = 0,
+        .w = SCREEN_WIDTH,
+        .h = SCREEN_HEIGHT
+    };
+    
+    
     srand(time(NULL));
+   
+    const Uint8 *keyboard_state_array = SDL_GetKeyboardState(NULL);
+
+    Uint64 NOW = SDL_GetPerformanceCounter();
+    Uint64 LAST = 0;
+    double deltaTime = 1.0/60.0;
     
     while( !quit )
     {
-        LAST = NOW;
-        NOW = SDL_GetPerformanceCounter();
+        //LAST = NOW;
+        //NOW = SDL_GetPerformanceCounter();
         
-        deltaTime = ((NOW - LAST) / (double)SDL_GetPerformanceFrequency() );
-        
-        bullet.dx = 2;
+        //deltaTime = ((NOW - LAST) / (double)SDL_GetPerformanceFrequency() );
         
         while( SDL_PollEvent(&e) != 0)
         {
@@ -191,27 +227,30 @@ int main(int argc, const char * argv[]) {
             {
                 quit = 1;
             }
-            else if(e.type == SDL_KEYDOWN)
+            else if(e.type == SDL_KEYDOWN && e.key.repeat == 0)
             {
-                switch(e.key.keysym.sym)
+                if(keyboard_state_array[SDL_SCANCODE_W])
                 {
-                    case SDLK_w:
-                        player.dy = - (deltaTime * vel);
-                        break;
-                    case SDLK_s:
-                        player.dy = (deltaTime * vel);
-                        break;
-                    case SDLK_a:
-                        player.dx = - (deltaTime * vel);
-                        break;
-                    case SDLK_d:
-                        player.dx = (deltaTime * vel);
-                        break;
-                    case SDLK_SPACE:
-                        bullet.position.x = player.position.x + player.position.w - 5;
-                        bullet.position.y = player.position.y + player.position.h - 2;
-                        bullet.visible = 1;
-                        objList_write(bullets, bullet, MAX_BULLETS);
+                    player.dy = - (deltaTime * vel);
+                }
+                if(keyboard_state_array[SDL_SCANCODE_S])
+                {
+                    player.dy = (deltaTime * vel);
+                }
+                if(keyboard_state_array[SDL_SCANCODE_A])
+                {
+                    player.dx = - (deltaTime * vel);
+                }
+                if(keyboard_state_array[SDL_SCANCODE_D])
+                {
+                    player.dx = (deltaTime * vel);
+                }
+                if(keyboard_state_array[SDL_SCANCODE_SPACE])
+                {
+                    bullet.x = player.x + player.position.w - 5;
+                    bullet.position.y = player.y + player.position.h - 2;
+                    bullet.visible = 1;
+                    objList_write(bullets, bullet, MAX_BULLETS);
                 }
             }
             else if (e.type == SDL_KEYUP)
@@ -233,8 +272,8 @@ int main(int argc, const char * argv[]) {
         
         //rounding speed away from 0 so the negative values dont become 0
         
-        player.dx = (player.dx) < 0 ? floor(player.dx) : ceil(player.dx);
-        player.dy = (player.dy) < 0 ? floor(player.dy) : ceil(player.dy);
+        //player.dx = (player.dx) < 0 ? floor(player.dx) : ceil(player.dx);
+        //player.dy = (player.dy) < 0 ? floor(player.dy) : ceil(player.dy);
         
         //updating player position
         update_gameObj(&player);
@@ -245,27 +284,63 @@ int main(int argc, const char * argv[]) {
                 update_gameObj(&bullets[i]);
         }
         
-        chicken.position.y = rand() % SCREEN_HEIGHT;
-        chicken.dx = -1 * deltaTime;
+        chicken.position.y = rand() % (SCREEN_HEIGHT - 50) + 10;
         chicken.visible = 1;
         
-        if(rand() % 100 == 0)
+        
+        //randomly spawning chickens
+        if(rand() % 100 < 5) //5% propability
             objList_write(chickens, chicken, MAX_CHICKENS);
         
-        for(size_t i = 0; i <= MAX_CHICKENS; i++){
-            if(chickens[i].visible){
-                chickens[i].dx = chickens[i].dx < 0 ? floor(chickens[i].dx) : ceil(chickens[i].dx);
-                update_gameObj(&chickens[i]);
-            }
-        }
+        bullet.dx = 2;
         
         SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0xFF); //white background
         SDL_RenderClear(renderer);
-
+        
+        //check for collisions
+        for(size_t i = 0; i < MAX_BULLETS; i++)
+        {
+            if(bullets[i].visible)
+            {
+                for(size_t j = 0; j < MAX_CHICKENS; j++)
+                {
+                    if(chickens[i].visible)
+                    {
+                        if(check_collsion(bullets[i].position, chickens[j].position))
+                        {
+                            bullets[i].visible = chickens[j].visible = 0;
+                        }
+                    }
+                }
+            }
+        }
+        
         //bullet color
         SDL_SetRenderDrawColor(renderer, 255, 200, 50, 255);
         //rendering bullets as lines :: TODO: sprites
         SDL_Rect pos;
+        
+        for(size_t i = 0; i <= MAX_CHICKENS; i++){
+            if(chickens[i].visible){
+                chickens[i].dx = -chickenVel * deltaTime;
+                update_gameObj(&chickens[i]);
+            }
+        }
+        
+        bg_offset = bg_offset + 0.1;
+        
+        bg_dest1.x = -(int) bg_offset;
+        bg_dest2.x = bg_dest1.x + SCREEN_WIDTH;
+        
+        if(bg_dest2.x == 0){
+            bg_dest1 = bg_dest2;
+            bg_dest2.x = SCREEN_WIDTH;
+            bg_offset = 0.0;
+        }
+        
+        SDL_RenderCopy(renderer, bg, &bg_source, &bg_dest1);
+        SDL_RenderCopy(renderer, bg, &bg_source, &bg_dest2);
+        
         for(size_t i = 0; i < MAX_BULLETS; i++){
             if(bullets[i].visible){
                 pos = bullets[i].position;
@@ -273,7 +348,8 @@ int main(int argc, const char * argv[]) {
             }
         }
         
-        for(size_t i = 0; i < MAX_CHICKENS; i++){
+        for(size_t i = 0; i < MAX_CHICKENS; i++)
+        {
             if(chickens[i].visible)
                 SDL_RenderCopy(renderer, chicken_cooked, &chickens[i].source, &chickens[i].position);
         }

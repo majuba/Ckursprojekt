@@ -29,5 +29,6 @@ typedef struct gameObj {
 
 void objList_write(gameObj *list, gameObj obj, int maxSize);
 SDL_Texture* load_Texture(char *path, SDL_Renderer *renderer);
+int check_collsion(SDL_Rect bullet, SDL_Rect chicken);
 
 #endif /* gameObjs_h */

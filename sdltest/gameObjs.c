@@ -26,4 +26,16 @@ SDL_Texture* load_Texture(char *path, SDL_Renderer *renderer){
     return res;
 }
 
+int check_collsion(SDL_Rect bullet, SDL_Rect chicken){
+    if((bullet.x + bullet.w > chicken.x
+       && bullet.x + bullet.w < chicken.x + chicken.w
+       && bullet.y > chicken.y && bullet.y < chicken.y + chicken.h)
+       || (bullet.x > chicken.x && bullet.x < chicken.x + chicken.w
+       && bullet.y > chicken.y && bullet.y < chicken.y + chicken.h))
+    {
+        return 1;
+    }
+    return 0;
+}
+
 

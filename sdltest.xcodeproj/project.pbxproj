@@ -33,6 +33,7 @@
 		D31592C92073957D008F6611 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		D31592CB20739AF6008F6611 /* shipsheetparts.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = shipsheetparts.bmp; path = assets/shipsheetparts.bmp; sourceTree = SOURCE_ROOT; };
 		D31592CD2073E25C008F6611 /* plane.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = plane.bmp; sourceTree = "<group>"; };
+		D3EFE65A20765A57007CED0E /* bg.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = bg.bmp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +89,7 @@
 			children = (
 				D31592CB20739AF6008F6611 /* shipsheetparts.bmp */,
 				D31592CD2073E25C008F6611 /* plane.bmp */,
+				D3EFE65A20765A57007CED0E /* bg.bmp */,
 				D303A82620750DE1006EE6D4 /* tinychicken_cooked.bmp */,
 			);
 			path = assets;
